@@ -1,0 +1,7 @@
+{
+  "name": "tasker",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
