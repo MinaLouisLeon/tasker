@@ -7,11 +7,13 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   isPlatform,
 } from "@ionic/react";
+import SideMenu from "../components/SideMenu";
 import {
   trashOutline,
   closeOutline,
@@ -30,6 +32,7 @@ const TaskListPage = () => {
       <SideMenu />
       <IonHeader>
         <IonToolbar mode={viewMode}>
+          <IonMenuButton slot="start" />
           <IonTitle>Tasks</IonTitle>
           <IonButtons slot="end">
             <IonButton color="primary" onClick={() => {
@@ -55,7 +58,7 @@ const TaskListPage = () => {
               text: "Open",
               icon: isPlatform("android") ? sendOutline : "",
               handler: () => {
-                console.log("open");
+                history.push("/openTask")
               },
             },
             {
