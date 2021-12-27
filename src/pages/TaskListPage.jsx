@@ -27,7 +27,7 @@ const TaskListPage = () => {
   const [showActionSheet, setShowActionSheet] = useState(false);
   return (
     <IonPage>
-      <SideMenu />
+     
       <IonHeader>
         <IonToolbar mode={viewMode}>
           <IonTitle>Tasks</IonTitle>
