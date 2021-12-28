@@ -1,9 +1,11 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import {app} from "./api/firebaseConfig";
 import TaskListPage from './pages/TaskListPage';
 import AddTaskPage from './pages/AddTaskPage';
 import OpenTaskPage from './pages/OpenTaskPage';
+import LoginPage from './pages/LoginPage';
 
 import "tachyons"
 /* Core CSS required for Ionic components to work properly */
@@ -31,11 +33,14 @@ const App= () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
+        <Route exact path="/login">
+          <LoginPage/>
+        </Route>
         <Route exact path="/home">
           <TaskListPage />
         </Route>
         <Route exact path="/">
-          <Redirect to="/home" />
+          <Redirect to="/login" />
         </Route>
         <Route exact path="/openTask/:id">
           <OpenTaskPage />

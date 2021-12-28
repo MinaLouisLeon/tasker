@@ -12,3 +12,12 @@ export const actionAddNote = (taskIndex,noteData) => {
         payload : noteData
     }
 }
+
+//user Reducer set user
+
+export const actionSetUser = (userInfo) => {
+    return{
+        type : 'setUser',
+        payload : userInfo
+    }
+}

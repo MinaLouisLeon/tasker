@@ -1,4 +1,5 @@
 import {
+  IonActionSheet,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -13,6 +14,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { isPlatform } from "@ionic/core";
+import { createOutline, trashOutline, closeOutline } from "ionicons/icons";
 import { isMobile } from "react-device-detect";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +31,7 @@ const OpenTaskPage = () => {
     disableBackButton: false,
   });
   const [newNote, setNewNote] = useState("");
+  const [showActionSheet, setShowActionSheet] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(newNote);
@@ -44,9 +48,9 @@ const OpenTaskPage = () => {
         <>
           {Object.keys(tasksData[id].taskNote).map((key) => {
             return (
-              <IonCard>
-                <IonCardContent>{tasksData[id].taskNote[key]}</IonCardContent>
-              </IonCard>
+                <IonCard button onClick={() => setShowActionSheet(true)}>
+                  <IonCardContent>{tasksData[id].taskNote[key]}</IonCardContent>
+                </IonCard>
             );
           })}
         </>
@@ -64,6 +68,9 @@ const OpenTaskPage = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonButton expand="block" color="success">
+          Start Task
+        </IonButton>
         {/* notes in task view */}
         {tasksData && handleAllNotes()}
         {/* show add note form on button click */}
@@ -109,6 +116,37 @@ const OpenTaskPage = () => {
             Add Note
           </IonButton>
         )}
+        {/* note options */}
+        <IonActionSheet
+          isOpen={showActionSheet}
+          onDidDismiss={() => setShowActionSheet(false)}
+          mode={viewMode}
+          buttons={[
+            {
+              text: "Edit Note",
+              icon: isPlatform("android") ? createOutline : "",
+              handler: () => {
+                console.log("edit note");
+              },
+            },
+            {
+              text: "Delete Note",
+              icon: trashOutline,
+              role: "destructive",
+              handler: () => {
+                console.log("delete note");
+              },
+            },
+            {
+              text: "Cancel",
+              icon: closeOutline,
+              role: "cancel",
+              handler: () => {
+                console.log("cancel");
+              },
+            },
+          ]}
+        />
       </IonContent>
     </IonPage>
   );
