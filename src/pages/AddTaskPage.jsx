@@ -12,12 +12,27 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import { useDispatch } from "react-redux";
+import { actionAddTask } from './../actions/index';
 const AddTaskPage = () => {
+  const dispatch = useDispatch(null);
   const history = useHistory(null);
   const [taskName, setTaskName] = useState("");
+  const [taskNote,setTaskNote] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("submit");
+    const taskObj = {
+      taskName : taskName,
+      noteIndex : taskNote === "" ? 0 : 1,
+      taskNote : taskNote === "" ? "" : {
+        0 : taskNote
+      }
+    }
+    dispatch(actionAddTask(taskObj));
+    setTaskName("");
+    setTaskNote("");
+    history.replace("/home")
   }
   return (
     <IonPage>
@@ -46,6 +61,8 @@ const AddTaskPage = () => {
               cols={3}
               inputMode="text"
               placeholder="task note"
+              value={taskNote}
+              onIonChange={(e) => setTaskNote(e.detail.value)}
             />
           </IonItem>
           <IonButton expand="block" color="success" type="submit">

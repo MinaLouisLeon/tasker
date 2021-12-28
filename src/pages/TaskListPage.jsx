@@ -23,10 +23,13 @@ import {
 import { useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
 const TaskListPage = () => {
   const viewMode = isMobile ? "" : "ios";
   const history = useHistory(null);
   const [showActionSheet, setShowActionSheet] = useState(false);
+  const tasksData = useSelector((state) => state.tasksReducer.tasks);
+  const [taskIndex,setTaskIndex] = useState(null);
   return (
     <IonPage>
       <SideMenu />
@@ -35,18 +38,30 @@ const TaskListPage = () => {
           <IonMenuButton slot="start" />
           <IonTitle>Tasks</IonTitle>
           <IonButtons slot="end">
-            <IonButton color="primary" onClick={() => {
-              history.replace("/addTask")
-            }}>Add Task</IonButton>
+            <IonButton
+              color="primary"
+              onClick={() => {
+                history.replace("/addTask");
+              }}
+            >
+              Add Task
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen id="enable-sidemenu">
         <IonList>
-          {/* map all the tasks */}
-          <IonItem button onClick={() => setShowActionSheet(true)}>
-            <IonLabel>Task 1</IonLabel>
-          </IonItem>
+          {tasksData &&
+            Object.keys(tasksData).map((key) => {
+              return (
+                <IonItem button onClick={() => {
+                  setTaskIndex(key);
+                  setShowActionSheet(true);
+                }}>
+                  <IonLabel>{tasksData[key].taskName}</IonLabel>
+                </IonItem>
+              );
+            })}
         </IonList>
         <IonActionSheet
           isOpen={showActionSheet}
@@ -58,7 +73,7 @@ const TaskListPage = () => {
               text: "Open",
               icon: isPlatform("android") ? sendOutline : "",
               handler: () => {
-                history.push("/openTask")
+                history.push("/openTask/" + taskIndex);
               },
             },
             {

@@ -37,7 +37,7 @@ const App= () => (
         <Route exact path="/">
           <Redirect to="/home" />
         </Route>
-        <Route exact path="/openTask">
+        <Route exact path="/openTask/:id">
           <OpenTaskPage />
         </Route>
         <Route exact path="/addTask" >
