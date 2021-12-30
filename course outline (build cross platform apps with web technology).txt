@@ -32,11 +32,12 @@ actions
 useDispatch & useSelector hooks
 --------------------------------------------------------
 #session 5
-timer
+finish redux functions
 firebase auth
+firebase firestore
 --------------------------------------------------------
 #session 6
-firebase firestore
+timer
 --------------------------------------------------------
 #session 7
 capacitor plugin (storge & camera)

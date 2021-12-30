@@ -12,27 +12,34 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { useHistory } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch ,useSelector} from "react-redux";
 import { actionAddTask } from './../actions/index';
 const AddTaskPage = () => {
   const dispatch = useDispatch(null);
   const history = useHistory(null);
   const [taskName, setTaskName] = useState("");
   const [taskNote,setTaskNote] = useState("");
-  const handleSubmit = (e) => {
+  const uid = useSelector(state=>state.userReducer.userInfo.uid);
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("submit");
     const taskObj = {
       taskName : taskName,
+      taskStatus : "opened",
       noteIndex : taskNote === "" ? 0 : 1,
       taskNote : taskNote === "" ? "" : {
-        0 : taskNote
+        0 : {
+          noteStatus : "opened",
+          note : taskNote
+        }
       }
     }
-    dispatch(actionAddTask(taskObj));
+    if(uid !== ""){
+    dispatch(actionAddTask(taskObj,uid));
     setTaskName("");
     setTaskNote("");
     history.replace("/home")
+    }
   }
   return (
     <IonPage>

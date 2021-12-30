@@ -20,16 +20,19 @@ import {
   sendOutline,
   createOutline,
 } from "ionicons/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { isMobile } from "react-device-detect";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { actionSetDelTask } from "../actions";
 const TaskListPage = () => {
   const viewMode = isMobile ? "" : "ios";
   const history = useHistory(null);
+  const dispatch = useDispatch(null);
   const [showActionSheet, setShowActionSheet] = useState(false);
   const tasksData = useSelector((state) => state.tasksReducer.tasks);
-  const [taskIndex,setTaskIndex] = useState(null);
+  const [taskIndex, setTaskIndex] = useState(null);
+  const uid = useSelector((state) => state.userReducer.userInfo.uid);
   return (
     <IonPage>
       <SideMenu />
@@ -53,11 +56,16 @@ const TaskListPage = () => {
         <IonList>
           {tasksData &&
             Object.keys(tasksData).map((key) => {
-              return (
-                <IonItem button onClick={() => {
-                  setTaskIndex(key);
-                  setShowActionSheet(true);
-                }}>
+              return tasksData[key].taskStatus === "deleted" ? (
+                <></>
+              ) : (
+                <IonItem
+                  button
+                  onClick={() => {
+                    setTaskIndex(key);
+                    setShowActionSheet(true);
+                  }}
+                >
                   <IonLabel>{tasksData[key].taskName}</IonLabel>
                 </IonItem>
               );
@@ -76,19 +84,19 @@ const TaskListPage = () => {
                 history.push("/openTask/" + taskIndex);
               },
             },
-            {
-              text: "Edit",
-              icon: isPlatform("android") ? createOutline : "",
-              handler: () => {
-                console.log("edit");
-              },
-            },
+            // {
+            //   text: "Edit",
+            //   icon: isPlatform("android") ? createOutline : "",
+            //   handler: () => {
+            //     console.log("edit");
+            //   },
+            // },
             {
               text: "Delete",
               icon: trashOutline,
               role: "destructive",
               handler: () => {
-                console.log("delete");
+                dispatch(actionSetDelTask(taskIndex, uid));
               },
             },
             {

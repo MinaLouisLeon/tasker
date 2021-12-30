@@ -1,5 +1,6 @@
 import {
   IonAlert,
+  IonCard,
   IonContent,
   IonHeader,
   IonPage,
@@ -14,13 +15,21 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 import { useDispatch } from "react-redux";
 import { actionSetUser } from "../actions";
+import { getUsersTasksFromFirestore } from "../api/firestoreFun";
+import { actionSetTasksReducer } from './../actions/index';
 const LoginPage = () => {
-    let userInfo = null;
-    const dispatch = useDispatch(null);
+  let userInfo = null;
+  const dispatch = useDispatch(null);
   const history = useHistory(null);
   const [showEmailVerificationAlert, setShowEmailVerificationAlert] =
     useState(false);
   const viewMode = isMobile ? "" : "ios";
+  const getUserTask = async (uid) => {
+    const userTasksResult = await getUsersTasksFromFirestore(uid);
+    if(userTasksResult !== false){
+      dispatch(actionSetTasksReducer(userTasksResult.tasks,userTasksResult.index));
+    }
+  }
   const uiConfig = {
     signInFlow: "redirect",
     // signInSuccessUrl: "/home",
@@ -33,18 +42,19 @@ const LoginPage = () => {
         console.log(authResult);
         if (!authResult.user.emailVerified) {
           setShowEmailVerificationAlert(true);
-        }else{
-            userInfo = {
-                uid : authResult.user.uid,
-                displayName : authResult.user.displayName,
-                email : authResult.user.email,
-                phoneNumber : authResult.user.phoneNumber,
-                photoURL : authResult.user.photoURL
-            }
-            dispatch(actionSetUser(userInfo))
-            history.replace('/home')
+        } else {
+          userInfo = {
+            uid: authResult.user.uid,
+            displayName: authResult.user.displayName,
+            email: authResult.user.email,
+            phoneNumber: authResult.user.phoneNumber,
+            photoURL: authResult.user.photoURL,
+          };
+          dispatch(actionSetUser(userInfo));
+          getUserTask(authResult.user.uid);
+          history.replace("/home");
         }
-        
+
         // User successfully signed in.
         // Return type determines whether we continue the redirect automatically
         // or whether we leave that to developer to handle.
@@ -60,10 +70,12 @@ const LoginPage = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <StyledFirebaseAuth
-          uiConfig={uiConfig}
-          firebaseAuth={firebase.auth()}
-        />
+        <IonCard className="login-main-container">
+          <StyledFirebaseAuth
+            uiConfig={uiConfig}
+            firebaseAuth={firebase.auth()}
+          />
+      </IonCard>
         <IonAlert
           isOpen={showEmailVerificationAlert}
           onDidDismiss={() => setShowEmailVerificationAlert(true)}

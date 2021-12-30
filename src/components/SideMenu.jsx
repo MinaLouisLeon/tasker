@@ -38,9 +38,6 @@ const SideMenu = () => {
           >
             <IonLabel>Add Task</IonLabel>
           </IonItem>
-          <IonItem color="danger">
-            <IonLabel>Exit</IonLabel>
-          </IonItem>
         </IonList>
       </IonContent>
     </IonMenu>

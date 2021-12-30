@@ -21,9 +21,11 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { actionAddNote } from "../actions";
+import { actionSetDelNote } from './../actions/index';
 const OpenTaskPage = () => {
   const dispatch = useDispatch(null);
   const { id } = useParams();
+  const uid = useSelector((state) => state.userReducer.userInfo.uid);
   const tasksData = useSelector((state) => state.tasksReducer.tasks);
   const viewMode = isMobile ? "" : "ios";
   const [showAddNote, setShowAddNote] = useState({
@@ -32,10 +34,14 @@ const OpenTaskPage = () => {
   });
   const [newNote, setNewNote] = useState("");
   const [showActionSheet, setShowActionSheet] = useState(false);
+  const [clickedNoteIndex,setClickedNoteIndex] = useState(null);
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(newNote);
-    dispatch(actionAddNote(id, newNote));
+    let dispatchData = {
+      noteStatus: "opened",
+      note: newNote,
+    };
+    dispatch(actionAddNote(id, dispatchData, uid));
     setShowAddNote({ show: false, disableBackButton: false });
     setNewNote("");
   };
@@ -48,9 +54,12 @@ const OpenTaskPage = () => {
         <>
           {Object.keys(tasksData[id].taskNote).map((key) => {
             return (
-                <IonCard button onClick={() => setShowActionSheet(true)}>
-                  <IonCardContent>{tasksData[id].taskNote[key]}</IonCardContent>
-                </IonCard>
+              tasksData[id].taskNote[key].noteStatus === 'deleted' ? <></> :
+              <IonCard button onClick={() => {setShowActionSheet(true);setClickedNoteIndex(key);}}>
+                <IonCardContent>
+                  {tasksData[id].taskNote[key].note}
+                </IonCardContent>
+              </IonCard>
             );
           })}
         </>
@@ -122,19 +131,20 @@ const OpenTaskPage = () => {
           onDidDismiss={() => setShowActionSheet(false)}
           mode={viewMode}
           buttons={[
-            {
-              text: "Edit Note",
-              icon: isPlatform("android") ? createOutline : "",
-              handler: () => {
-                console.log("edit note");
-              },
-            },
+            // {
+            //   text: "Edit Note",
+            //   icon: isPlatform("android") ? createOutline : "",
+            //   handler: () => {
+            //     console.log("edit note");
+            //   },
+            // },
             {
               text: "Delete Note",
               icon: trashOutline,
               role: "destructive",
               handler: () => {
                 console.log("delete note");
+                dispatch(actionSetDelNote(id,clickedNoteIndex,uid));
               },
             },
             {
